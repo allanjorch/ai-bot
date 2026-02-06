@@ -1,0 +1,43 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    volumes:
+      - ollama-data:/root/.ollama
+      - /opt/rocm/lib:/opt/rocm/lib
+    environment:
+      - HIP_VISIBLE_DEVICES=0
+      - ROCR_VISIBLE_DEVICES=0
+      - __NV_PRIME_RENDER_OFFLOAD=1
+      - __GLX_VENDOR_LIBRARY_NAME=amd
+      - LD_LIBRARY_PATH=/opt/rocm/lib:$LD_LIBRARY_PATH
+      - OLLAMA_LLM_LIBRARY=rocm
+
+  bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai-bot
+    restart: unless-stopped
+    depends_on:
+      ollama:
+        condition: service_started
+    environment:
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - OLLAMA_MODEL=${OLLAMA_MODEL}
+      - OLLAMA_URL=http://ollama:11434
+    networks:
+      - ollama-network
+
+volumes:
+  ollama-data:
+
+networks:
+  ollama-network:
+    driver: bridge
