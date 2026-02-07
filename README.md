@@ -1,6 +1,6 @@
 # AI Telegram Bot with Local LLM
 
-A secure, private Telegram bot powered by a local large language model (Qwen3:8b).
+A secure, private Telegram bot powered by a local large language model (Qwen3:4b).
 
 ## Overview
 
