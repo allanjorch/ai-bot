@@ -10,14 +10,12 @@ services:
       - /dev/dri:/dev/dri
     volumes:
       - ollama-data:/root/.ollama
-      - /opt/rocm/lib:/opt/rocm/lib
     environment:
       - HIP_VISIBLE_DEVICES=0
       - ROCR_VISIBLE_DEVICES=0
-      - __NV_PRIME_RENDER_OFFLOAD=1
-      - __GLX_VENDOR_LIBRARY_NAME=amd
-      - LD_LIBRARY_PATH=/opt/rocm/lib:$LD_LIBRARY_PATH
-      - OLLAMA_LLM_LIBRARY=rocm
+      - OLLAMA_CONTEXT_LENGTH=8192
+    networks:
+      - ollama-network
 
   bot:
     build:
